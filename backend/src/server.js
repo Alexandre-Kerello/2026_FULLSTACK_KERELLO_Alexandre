@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import errorHandler from "./middlewares/error.middleware.js";
 import connectDB from "./config/db.js";
 import authRoutes from "./modules/auth/auth.route.js";
@@ -9,13 +10,17 @@ const port = process.env.PORT;
 
 // Middleware
 app.use(express.json());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
+}));
 
 // DB connection
 connectDB();
 
 // Routes 
-app.use('/auth', authRoutes);
-app.use('/users', usersRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
 
 // Error 404 handler
 app.use((_req, res, next) => {
