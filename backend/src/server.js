@@ -1,6 +1,7 @@
 import express from "express";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { connectDB } from "./config/db.js";
+import authRoutes from "./modules/auth/auth.route.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -11,9 +12,8 @@ app.use(express.json());
 // DB connection
 connectDB();
 
-app.use('/', (req, res) => {
-    res.send('Bienvenue sur l\'API du gestionnaire de banque !');
-});
+// Routes 
+app.use('/auth', authRoutes);
 
 // Error 404 handler
 app.use((_req, res, next) => {
