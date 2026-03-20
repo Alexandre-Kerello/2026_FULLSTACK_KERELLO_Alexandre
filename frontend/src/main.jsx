@@ -5,9 +5,10 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import './index.css'
-
+/* Pages */
 import Home from './pages/public/Home.jsx'
 import Login from './pages/public/Login.jsx'
+import Register from './pages/public/Register.jsx'
 import ErrorPage from './pages/public/Error.jsx'
 
 const router = createBrowserRouter([
@@ -16,6 +17,16 @@ const router = createBrowserRouter([
     element: <Home />,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/login",
+    element: <Login />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+    errorElement: <ErrorPage />,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
