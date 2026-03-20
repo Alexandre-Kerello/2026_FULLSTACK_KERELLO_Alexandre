@@ -1,8 +1,15 @@
 import express from "express";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { connectDB } from "./config/db.js";
 
 const app = express();
 const port = process.env.PORT;
+
+// Middleware
+app.use(express.json());
+
+// DB connection
+connectDB();
 
 app.use('/', (req, res) => {
     res.send('Bienvenue sur l\'API du gestionnaire de banque !');
