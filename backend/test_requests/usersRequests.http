@@ -1,8 +1,10 @@
-GET http://localhost:3000/users/69bd18e36dfc64260c64f71a
+GET http://localhost:3000/users/69bd25f8d73c093d54414c65
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmQyNWY4ZDczYzA5M2Q1NDQxNGM2NSIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQwMDM3MDYsImV4cCI6MTc3NDAwNzMwNn0.FME5LhuVDBmaiOdLJc4aaZMHYhhCPsHfjIrXHJ5i2jw
 
 ###
-PUT http://localhost:3000/users/69bd18e36dfc64260c64f71a
+PUT http://localhost:3000/users/69bd25f8d73c093d54414c65
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmQyNWY4ZDczYzA5M2Q1NDQxNGM2NSIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQwMDM3MDYsImV4cCI6MTc3NDAwNzMwNn0.FME5LhuVDBmaiOdLJc4aaZMHYhhCPsHfjIrXHJ5i2jw
 
 {
     "firstname": "John",
@@ -11,4 +13,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/users/69bd18e36dfc64260c64f71a
+DELETE http://localhost:3000/users/69bd25f8d73c093d54414c65
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmQyNWY4ZDczYzA5M2Q1NDQxNGM2NSIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQwMDM3MDYsImV4cCI6MTc3NDAwNzMwNn0.FME5LhuVDBmaiOdLJc4aaZMHYhhCPsHfjIrXHJ5i2jw
