@@ -1,5 +1,5 @@
 import express from "express";
-import { errorHandler } from "./middlewares/error.middleware.js";
+import errorHandler from "./middlewares/error.middleware.js";
 
 const app = express();
 const port = process.env.PORT;
