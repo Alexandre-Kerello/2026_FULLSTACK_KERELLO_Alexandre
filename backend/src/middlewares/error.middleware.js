@@ -24,4 +24,4 @@ function errorHandler(err, req, res, next)
     return res.status(status).json({ message });
 }
 
-export { errorHandler };
+export default errorHandler;

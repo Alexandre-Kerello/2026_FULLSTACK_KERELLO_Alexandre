@@ -1,6 +1,6 @@
 import express from "express";
-import { errorHandler } from "./middlewares/error.middleware.js";
-import { connectDB } from "./config/db.js";
+import errorHandler from "./middlewares/error.middleware.js";
+import connectDB from "./config/db.js";
 import authRoutes from "./modules/auth/auth.route.js";
 import usersRoutes from "./modules/users/users.routes.js";
 
