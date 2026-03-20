@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import userModel from '../users/user.model.js';
+import userModel from '../users/users.model.js';
 import logger from '../../utils/logger.js';
-import { isUserAlreadyExists } from '../users/user.service.js';
+import userService from '../users/users.service.js';
 
 async function checkUserPassword(plainPassword, hashedPassword) {
     return bcrypt.compare(plainPassword, hashedPassword);
@@ -18,7 +18,7 @@ function signToken(user) {
 
 async function createUser({ firstname, lastname, email, password }) {
     logger.info(`Attempting to register user with email: ${email}`);
-    if (await isUserAlreadyExists(email)) {
+    if (await userService.isUserAlreadyExists(email)) {
         logger.warn(`Attempt to register with existing email: ${email}`);
         const err = new Error('Email already in use');
         err.status = 400;
@@ -40,7 +40,7 @@ async function createUser({ firstname, lastname, email, password }) {
 }
 
 async function loginUser({ email, password }) {
-    if (await isUserAlreadyExists(email) === false) {
+    if (await userService.isUserAlreadyExists(email) === false) {
         logger.warn(`Login attempt with non-existent email: ${email}`);
         const err = new Error('User not found');
         err.status = 401;

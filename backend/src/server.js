@@ -2,6 +2,7 @@ import express from "express";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./modules/auth/auth.route.js";
+import usersRoutes from "./modules/users/users.routes.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -14,6 +15,7 @@ connectDB();
 
 // Routes 
 app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
 
 // Error 404 handler
 app.use((_req, res, next) => {

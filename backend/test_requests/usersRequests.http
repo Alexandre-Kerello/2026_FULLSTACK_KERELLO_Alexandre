@@ -1,0 +1,14 @@
+GET http://localhost:3000/users/69bd18e36dfc64260c64f71a
+
+###
+PUT http://localhost:3000/users/69bd18e36dfc64260c64f71a
+Content-Type: application/json
+
+{
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "johndoe@example.com"
+}
+
+###
+DELETE http://localhost:3000/users/69bd18e36dfc64260c64f71a
