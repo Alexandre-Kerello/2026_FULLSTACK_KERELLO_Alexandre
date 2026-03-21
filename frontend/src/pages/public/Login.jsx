@@ -9,17 +9,36 @@ export default function Login()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const response = await axios.post("http://localhost:3000/api/auth/login", {
-      email,
-      password
-    });
+    setErrorMessage("");
+    setIsSubmitting(true);
 
-    localStorage.setItem("token", response.data.token);
-    navigate(`/dashboard?id=${response.data.userId}`);
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/login", {
+        email,
+        password
+      });
+
+      if (response.status === 200) {
+        navigate(`/dashboard?id=${response.data.userId}`);
+        return;
+      }
+
+      setErrorMessage("La connexion au compte a echouée. Reessayez.");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        setErrorMessage(apiMessage || "Erreur serveur, impossible de se connecter au compte.");
+      } else {
+        setErrorMessage("Une erreur inattendue est survenue.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -30,6 +49,7 @@ export default function Login()
             alt="Your Company"
             src="https://static.vecteezy.com/system/resources/previews/013/948/616/non_2x/bank-icon-logo-design-vector.jpg"
             className="mx-auto h-10 w-auto"
+            onClick={() => navigate("/")}
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             Connectez-vous à votre compte
@@ -60,11 +80,11 @@ export default function Login()
                 <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
                   Mot de passe
                 </label>
-                <div className="text-sm">
+                {/* <div className="text-sm">
                   <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
                     Mot de passe oublié?
                   </a>
-                </div>
+                </div> */}
               </div>
               <div className="mt-2 relative">
                 <input
@@ -90,19 +110,26 @@ export default function Login()
               </div>
             </div>
 
+            {errorMessage && (
+              <div className="text-sm text-red-600">
+                {errorMessage}
+              </div>
+            )}
+
             <div>
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Se connecter
+                {isSubmitting ? "Connexion..." : "Se connecter"}
               </button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Pas encore de compte ?{' '}
-            <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+            <a href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
               Créez-en un gratuitement
             </a>
           </p>

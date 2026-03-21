@@ -42,9 +42,7 @@ async function createUser({ firstname, lastname, email, password }) {
 async function loginUser({ email, password }) {
     if (await userService.isUserAlreadyExists(email) === false) {
         logger.warn(`Login attempt with non-existent email: ${email}`);
-        const err = new Error('User not found');
-        err.status = 401;
-        throw err;
+        return {};
     }
 
     const user = await userModel.findOne({ email });

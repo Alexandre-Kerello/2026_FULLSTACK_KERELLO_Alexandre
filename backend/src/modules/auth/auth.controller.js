@@ -1,3 +1,4 @@
+import { userInfo } from 'os';
 import logger from '../../utils/logger.js';
 import authService from './auth.service.js';
 
@@ -32,7 +33,7 @@ async function login(req, res, next) {
         }
 
         const { token, user } = await authService.loginUser({ email, password });
-        if (!token) {
+        if (!user) {
             logger.warn(`Failed login attempt for email: ${email}`);
             return res.status(401).json({ message: 'Invalid email or password' });
         }
