@@ -10,6 +10,7 @@ import Home from './pages/public/Home.jsx'
 import Login from './pages/public/Login.jsx'
 import Register from './pages/public/Register.jsx'
 import ErrorPage from './pages/public/Error.jsx'
+import Dashboard from './pages/private/Dashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,11 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/dashboard/:id",
+    element: <Dashboard />,
     errorElement: <ErrorPage />,
   }
 ]);

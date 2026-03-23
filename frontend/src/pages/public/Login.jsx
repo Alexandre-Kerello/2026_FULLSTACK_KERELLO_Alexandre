@@ -24,7 +24,7 @@ export default function Login()
       });
 
       if (response.status === 200) {
-        navigate(`/dashboard?id=${response.data.userId}`);
+        navigate(`/dashboard/${response.data.userId}`);
         return;
       }
 

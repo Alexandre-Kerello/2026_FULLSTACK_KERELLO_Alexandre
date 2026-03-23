@@ -46,10 +46,13 @@ export default function Register() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-12">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base/7 font-semibold text-gray-900">Créer un compte</h2>
+    <div className="min-h-screen w-full flex items-center justify-center px-4 py-8">
+      <form onSubmit={handleSubmit} className="w-full max-w-2xl">
+        <div className="space-y-12">
+          <div className="border-b border-gray-900/10 pb-12">
+          <h2 className="mt-10 text-left text-2xl/9 font-bold tracking-tight text-gray-900">
+            Créer un compte
+          </h2>
           <p className="mt-1 text-sm/6 text-gray-600">Tous les champs sont requis.</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -135,22 +138,23 @@ export default function Register() {
         </div>
       </div>
 
-      {errorMessage && (
-        <p className="mt-4 text-sm text-red-600">{errorMessage}</p>
-      )}
+        {errorMessage && (
+          <p className="mt-4 text-sm text-red-600">{errorMessage}</p>
+        )}
 
-      <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" onClick={() => { navigate(-1) }} className="rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:outline-2 hover:outline-gray-400">
-          Annuler
-        </button>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 hover:outline-2 hover:outline-offset-2 hover:outline-indigo-800"
-        >
-          {isSubmitting ? "Inscription..." : "S'inscrire"}
-        </button>
-      </div>
-    </form>
+        <div className="mt-6 flex items-center justify-end gap-x-6">
+          <button type="button" onClick={() => { navigate(-1) }} className="rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:outline-2 hover:outline-gray-400">
+            Annuler
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 hover:outline-2 hover:outline-offset-2 hover:outline-indigo-800"
+          >
+            {isSubmitting ? "Inscription..." : "S'inscrire"}
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
