@@ -1,6 +1,21 @@
+import { useNavigate } from "react-router-dom";
 import { fmt } from "../../utils/dashboardUtils.js";
 
-export function Header({ user }) {
+export function Header({ user, currentPage, onPageChange }) {
+  const navigate = useNavigate();
+  
+  const PAGE_ROUTES = {
+    "Dashboard": `/dashboard/${user.id}`,
+    "Virements": `/dashboard/${user.id}/virements`,
+    "Analyses": `/dashboard/${user.id}/analyses`,
+    "Paramètres": `/dashboard/${user.id}/parametres`,
+  };
+
+  const handlePageChange = (pageName) => {
+    onPageChange(pageName);
+    navigate(PAGE_ROUTES[pageName]);
+  };
+
   return (
     <header className="sticky top-0 z-50 h-[60px] bg-white border-b border-slate-200 flex items-center px-6 gap-4 shadow-sm">
       {/* Logo */}
@@ -15,16 +30,17 @@ export function Header({ user }) {
 
       {/* Nav */}
       <nav className="hidden md:flex items-center gap-0.5 ml-5">
-        {["Dashboard", "Virements", "Analyses", "Paramètres"].map(item => (
+        {Object.keys(PAGE_ROUTES).map(pageName => (
           <button
-            key={item}
+            key={pageName}
+            onClick={() => handlePageChange(pageName)}
             className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              item === "Dashboard"
+              pageName === currentPage
                 ? "bg-emerald-50 text-emerald-700 font-semibold"
                 : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
             }`}
           >
-            {item}
+            {pageName}
           </button>
         ))}
       </nav>

@@ -10,7 +10,11 @@ import Home from './pages/public/Home.jsx'
 import Login from './pages/public/Login.jsx'
 import Register from './pages/public/Register.jsx'
 import ErrorPage from './pages/public/Error.jsx'
-import Dashboard from './pages/private/Dashboard.jsx'
+import DashboardLayout from './pages/private/Dashboard.jsx'
+import DashboardHome from './pages/private/DashboardHome.jsx'
+import Virements from './pages/private/Virements.jsx'
+import Analyses from './pages/private/Analyses.jsx'
+import Parametres from './pages/private/Parametres.jsx'
 
 const router = createBrowserRouter([
   {
@@ -29,9 +33,27 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/dashboard/:id",
-    element: <Dashboard />,
+    path: "/dashboard/:id/*",
+    element: <DashboardLayout />,
     errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <DashboardHome />,
+      },
+      {
+        path: "virements",
+        element: <Virements />,
+      },
+      {
+        path: "analyses",
+        element: <Analyses />,
+      },
+      {
+        path: "parametres",
+        element: <Parametres />,
+      },
+    ],
   }
 ]);
 
