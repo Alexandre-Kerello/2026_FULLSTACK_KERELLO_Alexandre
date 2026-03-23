@@ -24,6 +24,7 @@ export default function Login()
       });
 
       if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
         navigate(`/dashboard/${response.data.userId}`);
         return;
       }
@@ -46,7 +47,7 @@ export default function Login()
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            alt="Your Company"
+            alt="Bank Manager Logo"
             src="https://static.vecteezy.com/system/resources/previews/013/948/616/non_2x/bank-icon-logo-design-vector.jpg"
             className="mx-auto h-10 w-auto"
             onClick={() => navigate("/")}

@@ -39,7 +39,7 @@ export default function Home() {
             <a href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">{homeContent.brandName}</span>
               <img
-                alt=""
+                alt="Bank Manager Logo"
                 src="https://static.vecteezy.com/system/resources/previews/013/948/616/non_2x/bank-icon-logo-design-vector.jpg"
                 className="h-8 w-auto"
               />

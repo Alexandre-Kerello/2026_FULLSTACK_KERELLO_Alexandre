@@ -1,7 +1,7 @@
 // ── Mock Data ──────────────────────────────────────────────────────────────────
 export const USER = {
-  "id": "69bda95fd856c8c47447e012",
-  "name": "Alexandre",
+  "firstName": "Alexandre",
+  "lastName": "Kerello",
   "email": "alexandre@email.com",
   "avatar": "A",
   "totalBalance": 24831.42,
