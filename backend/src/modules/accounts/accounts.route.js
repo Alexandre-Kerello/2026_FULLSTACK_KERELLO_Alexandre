@@ -8,9 +8,9 @@ router.route('/')
     .get(authenticateUser, accountsController.getAccounts)
     .post(authenticateUser, accountsController.createAccount);
 
-// router.route('/:id')
-//   .get(authenticateUser, accountsController.getAccount)
-//   .put(authenticateUser, accountsController.updateAccount)
-//   .delete(authenticateUser, accountsController.deleteAccount);
+router.route('/:id')
+  .get(authenticateUser, accountsController.getAccount)
+  .put(authenticateUser, accountsController.updateAccount)
+  .delete(authenticateUser, accountsController.deleteAccount);
 
 export default router;
