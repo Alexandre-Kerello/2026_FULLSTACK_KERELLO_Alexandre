@@ -12,9 +12,9 @@ export default function DashboardLayout() {
   // Déterminer la page actuelle basée sur la route
   const getCurrentPage = () => {
     const pathname = location.pathname;
-    if (pathname.includes("virements")) return "Virements";
+    if (pathname.includes("accounts")) return "Comptes";
     if (pathname.includes("analyses")) return "Analyses";
-    if (pathname.includes("parametres")) return "Paramètres";
+    if (pathname.includes("parameters")) return "Paramètres";
     return "Dashboard";
   };
 

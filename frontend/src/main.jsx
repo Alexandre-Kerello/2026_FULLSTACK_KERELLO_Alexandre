@@ -42,7 +42,7 @@ const router = createBrowserRouter([
         element: <DashboardHome />,
       },
       {
-        path: "virements",
+        path: "accounts",
         element: <Virements />,
       },
       {
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
         element: <Analyses />,
       },
       {
-        path: "parametres",
+        path: "parameters",
         element: <Parametres />,
       },
     ],
