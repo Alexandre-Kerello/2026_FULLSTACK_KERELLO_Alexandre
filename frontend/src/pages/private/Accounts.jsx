@@ -1,23 +1,49 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import axios from "axios";
 import AccountsTable from "../../components/account/AccountsTable.jsx";
-import { AccountModal } from "../../components/account/AccountModal.jsx";
+import AccountCreateModal from "../../components/account/AccountCreateModal.jsx";
+import AccountEditModal from "../../components/account/AccountEditModal.jsx";
 
 export default function Accounts() {
   const { accounts, refreshAccounts } = useOutletContext();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreationModalOpen, setIsCreationModalOpen] = useState(false);
+  const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleEditAccount = (account) => {
-    console.log("Edit account:", account.id, account.name);
+  const handleEditAccount = async (account) => {
+    setSelectedAccount(account);
+    setIsEditingModalOpen(true);
   };
 
-  const handleDeleteAccount = (account) => {
-    console.log("Delete account:", account.id, account.name);
+  const handleDeleteAccount = async (account) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/accounts/${account.id}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+
+      if (response.status === 200) {
+        refreshAccounts();
+        return;
+      } 
+      
+      setErrorMessage("La suppression du compte a echouée. Reessayez.");
+    } 
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        const apiMessage = error.response?.data?.message;
+        setErrorMessage(apiMessage || "Erreur serveur, impossible de se connecter au compte.");
+      } 
+      else {
+        setErrorMessage("Une erreur inattendue est survenue.");
+      }
+    }
   };
 
   const handleCreateAccount = () => {
-    console.log("Create new account");
-    setIsModalOpen(true);
+    setIsCreationModalOpen(true);
   }
 
   return (
@@ -33,10 +59,27 @@ export default function Accounts() {
       >
         Ajouter un compte
       </button>
-      <AccountModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+
+      { errorMessage && (
+        <div className="text-sm text-red-600">
+          {errorMessage}
+        </div>
+      )}
+
+      <AccountCreateModal
+        isOpen={isCreationModalOpen}
+        onClose={() => setIsCreationModalOpen(false)}
         onAccountCreated={refreshAccounts}
+      />
+
+      <AccountEditModal
+        isOpen={isEditingModalOpen}
+        account={selectedAccount}
+        onClose={() => {
+          setIsEditingModalOpen(false);
+          setSelectedAccount(null);
+        }}
+        onAccountEdited={refreshAccounts}
       />
     </main>
   );

@@ -8,7 +8,12 @@ const CURRENCIES_ID = {
     GBP: "69bd18c9d177f9dff28563b3"
 }
 
-export function AccountModal({ isOpen, onClose, onAccountCreated = async () => {} }) {
+export default function AccountEditModal({
+  isOpen,
+  account,
+  onClose,
+  onAccountEdited = async () => {},
+}) {
   const [formData, setFormData] = useState({
     name: "",
     type: "checking",
@@ -21,10 +26,27 @@ export function AccountModal({ isOpen, onClose, onAccountCreated = async () => {
 
   const modalRef = useRef(null);
 
+  useEffect(() => {
+    if (!account) return;
+
+    setFormData({
+      name: account.name || "",
+      type: account.type || "checking",
+      balance: Number(account.balance ?? 0),
+      currency: account.currency || "EUR",
+    });
+  }, [account, isOpen]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
     setIsSubmitting(true);
+
+    if (!account?.id) {
+      setErrorMessage("Aucun compte selectionne pour la modification.");
+      setIsSubmitting(false);
+      return;
+    }
 
     const payload = {
       name: formData.name.trim(),
@@ -34,25 +56,19 @@ export function AccountModal({ isOpen, onClose, onAccountCreated = async () => {
     };
 
     try {
-        const response = await axios.post(
-            "http://localhost:3000/api/accounts",
+        const response = await axios.put(
+            `http://localhost:3000/api/accounts/${account.id}`,
             payload,
             { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
 
-        if (response.status === 201) {
-          await onAccountCreated(response.data);
-            setFormData({
-                name: "",
-                type: "checking",
-                balance: 0.00,
-                currency: "EUR"
-            });
+        if (response.status === 200) {
+          await onAccountEdited(response.data);
             onClose();
             return; 
         }
 
-        setErrorMessage("La création du compte a echouée. Reessayez.");
+        setErrorMessage("La modification du compte a echouee. Reessayez.");
     } 
     catch (error) {
         if (axios.isAxiosError(error)) {
@@ -103,7 +119,7 @@ export function AccountModal({ isOpen, onClose, onAccountCreated = async () => {
         >
         {/* Header */}
         <div className="sticky top-0 flex items-center justify-between p-6 border-b border-slate-200 bg-white">
-            <h2 className="text-lg font-bold text-slate-900">Nouveau compte</h2>
+            <h2 className="text-lg font-bold text-slate-900">Modifier le compte</h2>
             <button
                 onClick={onClose}
                 className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors"
@@ -207,7 +223,7 @@ export function AccountModal({ isOpen, onClose, onAccountCreated = async () => {
                 type="submit"
                 className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-400 transition-colors"
                 >
-                    {isSubmitting ? "Création..." : "Ajouter"}
+                    {isSubmitting ? "Modification..." : "Enregistrer"}
                 </button>
             </div>
         </form>
