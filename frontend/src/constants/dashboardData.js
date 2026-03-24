@@ -8,10 +8,10 @@ export const USER = {
 };
 
 export const ACCOUNTS = [
-  { "id": 1, "name": "Compte Courant", "number": "**** 4821", "balance": 3412.80,  "type": "checking", "color": "emerald" },
-  { "id": 2, "name": "Livret A",        "number": "**** 2047", "balance": 8200.00,  "type": "savings",  "color": "blue"    },
-  { "id": 3, "name": "Compte Épargne",  "number": "**** 9913", "balance": 12118.62, "type": "savings",  "color": "amber"   },
-  { "id": 4, "name": "Carte Prépayée",  "number": "**** 3356", "balance": 1100.00,  "type": "prepaid",  "color": "rose"    },
+  { "id": 1, "name": "Compte Courant", "number": "**** 4821", "balance": 3412.80,  "type": "checking", "color": "emerald", "currency": "EUR" },
+  { "id": 2, "name": "Livret A",        "number": "**** 2047", "balance": 8200.00,  "type": "savings",  "color": "blue", "currency": "EUR" },
+  { "id": 3, "name": "Compte Épargne",  "number": "**** 9913", "balance": 12118.62, "type": "savings",  "color": "amber", "currency": "EUR" },
+  { "id": 4, "name": "Carte Prépayée",  "number": "**** 3356", "balance": 1100.00,  "type": "prepaid",  "color": "rose", "currency": "EUR" },
 ];
 
 export const ALL_TRANSACTIONS = [
