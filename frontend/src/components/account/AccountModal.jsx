@@ -8,7 +8,7 @@ const CURRENCIES_ID = {
     GBP: "69bd18c9d177f9dff28563b3"
 }
 
-export function AccountModal({ isOpen, onClose }) {
+export function AccountModal({ isOpen, onClose, onAccountCreated = async () => {} }) {
   const [formData, setFormData] = useState({
     name: "",
     type: "checking",
@@ -41,6 +41,7 @@ export function AccountModal({ isOpen, onClose }) {
         );
 
         if (response.status === 201) {
+          await onAccountCreated(response.data);
             setFormData({
                 name: "",
                 type: "checking",

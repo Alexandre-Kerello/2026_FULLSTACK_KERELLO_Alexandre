@@ -1,5 +1,5 @@
 import { fmt } from "../../utils/dashboardUtils.js";
-import { COLOR_MAP, TYPE_ICON } from "../../constants/dashboardData.js";
+import { TYPE_ICON } from "../../constants/dashboardData.js";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export default function AccountsTable({

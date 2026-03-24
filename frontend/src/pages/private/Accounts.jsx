@@ -4,7 +4,7 @@ import AccountsTable from "../../components/account/AccountsTable.jsx";
 import { AccountModal } from "../../components/account/AccountModal.jsx";
 
 export default function Accounts() {
-  const { accounts } = useOutletContext();
+  const { accounts, refreshAccounts } = useOutletContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEditAccount = (account) => {
@@ -36,6 +36,7 @@ export default function Accounts() {
       <AccountModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onAccountCreated={refreshAccounts}
       />
     </main>
   );
