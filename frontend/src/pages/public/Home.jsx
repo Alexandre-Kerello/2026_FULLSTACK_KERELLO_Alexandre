@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline' 
+import bankLogo from '../../assets/bank-icon.png'
 
 const navigation = [
   // { name: 'Product', href: '#' },
@@ -40,7 +41,7 @@ export default function Home() {
               <span className="sr-only">{homeContent.brandName}</span>
               <img
                 alt="Bank Manager Logo"
-                src="https://static.vecteezy.com/system/resources/previews/013/948/616/non_2x/bank-icon-logo-design-vector.jpg"
+                src={bankLogo}
                 className="h-8 w-auto"
               />
             </a>
@@ -75,8 +76,8 @@ export default function Home() {
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">{homeContent.brandName}</span>
                 <img
-                  alt=""
-                  src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                  alt="Bank Manager Logo"
+                  src={bankLogo}
                   className="h-8 w-auto"
                 />
               </a>

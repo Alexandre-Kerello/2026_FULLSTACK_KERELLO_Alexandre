@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import bankLogo from '../../assets/bank-icon.png'
 
 export default function Register() {
   const navigate = useNavigate();
@@ -49,6 +50,14 @@ export default function Register() {
     <div className="min-h-screen w-full flex items-center justify-center px-4 py-8">
       <form onSubmit={handleSubmit} className="w-full max-w-2xl">
         <div className="space-y-12">
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img
+              alt="Bank Manager Logo"
+              src={bankLogo}
+              className="mx-auto h-10 w-auto"
+              onClick={() => navigate("/")}
+            />
+          </div>
           <div className="border-b border-gray-900/10 pb-12">
           <h2 className="mt-10 text-left text-2xl/9 font-bold tracking-tight text-gray-900">
             Créer un compte

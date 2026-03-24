@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import bankLogo from '../../assets/bank-icon.png'
 
 export default function Login() 
 {
@@ -48,7 +49,7 @@ export default function Login()
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             alt="Bank Manager Logo"
-            src="https://static.vecteezy.com/system/resources/previews/013/948/616/non_2x/bank-icon-logo-design-vector.jpg"
+            src={bankLogo}
             className="mx-auto h-10 w-auto"
             onClick={() => navigate("/")}
           />
