@@ -12,9 +12,9 @@ import Register from './pages/public/Register.jsx'
 import ErrorPage from './pages/public/Error.jsx'
 import DashboardLayout from './pages/private/Dashboard.jsx'
 import DashboardHome from './pages/private/DashboardHome.jsx'
-import Virements from './pages/private/Virements.jsx'
+import Accounts from './pages/private/Accounts.jsx'
 import Analyses from './pages/private/Analyses.jsx'
-import Parametres from './pages/private/Parametres.jsx'
+import Parameters from './pages/private/Parameters.jsx'
 
 const router = createBrowserRouter([
   {
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: "accounts",
-        element: <Virements />,
+        element: <Accounts />,
       },
       {
         path: "analyses",
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
       },
       {
         path: "parameters",
-        element: <Parametres />,
+        element: <Parameters />,
       },
     ],
   }

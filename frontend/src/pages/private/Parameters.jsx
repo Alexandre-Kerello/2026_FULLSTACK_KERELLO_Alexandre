@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router-dom";
 
-export default function Parametres() {
+export default function Parameters() {
   const { user } = useOutletContext();
 
   return (

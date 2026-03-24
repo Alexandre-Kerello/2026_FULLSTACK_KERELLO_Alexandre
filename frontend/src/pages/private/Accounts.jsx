@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router-dom";
 
-export default function Virements() {
+export default function Accounts() {
   const { accounts } = useOutletContext();
 
   return (
@@ -11,7 +11,7 @@ export default function Virements() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12M8 7a2 2 0 11-4 0m4 0a2 2 0 00-4 0m0 0H4m16 0h4m-4 7h4m-4 0a2 2 0 110-4m-4 4a2 2 0 110-4m0 4h-2" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-800">Virements</h2>
+        <h2 className="text-2xl font-bold text-slate-800">Comptes</h2>
         <p className="text-slate-500 text-center max-w-md">
           Gérez vos virements entre comptes et effectuez des transferts sécurisés.
         </p>
