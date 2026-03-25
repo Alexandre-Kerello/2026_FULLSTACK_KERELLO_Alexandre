@@ -6,6 +6,7 @@ import authRoutes from "./modules/auth/auth.route.js";
 import usersRoutes from "./modules/users/users.routes.js";
 import accountsRoutes from "./modules/accounts/accounts.route.js";
 import transactionsRoutes from "./modules/transactions/transactions.route.js";
+import categoriesRoutes from "./modules/categories/categories.route.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/accounts', accountsRoutes);
 app.use('/api/transactions', transactionsRoutes);
+app.use('/api/categories', categoriesRoutes);
 
 // Error 404 handler
 app.use((_req, res, next) => {
