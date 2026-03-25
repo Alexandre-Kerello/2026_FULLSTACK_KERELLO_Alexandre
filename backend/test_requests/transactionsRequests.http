@@ -1,0 +1,35 @@
+GET http://localhost:3000/api/transactions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmRhOTVmZDg1NmM4YzQ3NDQ3ZTAxMiIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQ0MzAwOTUsImV4cCI6MTc3NDQzMzY5NX0.AeLVcJfsQpx15oPyp5jgZTD-urnnT2JyJWtl8l8StmY
+
+###
+POST http://localhost:3000/api/transactions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmRhOTVmZDg1NmM4YzQ3NDQ3ZTAxMiIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQ0MzAwOTUsImV4cCI6MTc3NDQzMzY5NX0.AeLVcJfsQpx15oPyp5jgZTD-urnnT2JyJWtl8l8StmY
+Content-Type: application/json
+
+{
+    "accountId": "69c26f8c70fa988b02f1d51e",
+    "label": "Test Transaction",
+    "amount": 100,
+    "type": "debit",
+    "currencyId": "69bd18c9d177f9dff28563b1",
+    "categoryId": "69bd18c9d177f9dff28563b4",
+    "date": "2023-01-01"
+}
+
+###
+GET http://localhost:3000/api/transactions/69c3b3c9b52212c702270d37
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmRhOTVmZDg1NmM4YzQ3NDQ3ZTAxMiIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQ0MzAwOTUsImV4cCI6MTc3NDQzMzY5NX0.AeLVcJfsQpx15oPyp5jgZTD-urnnT2JyJWtl8l8StmY
+
+###
+PUT http://localhost:3000/api/transactions/69c3b3c9b52212c702270d37
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmRhOTVmZDg1NmM4YzQ3NDQ3ZTAxMiIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQ0MzAwOTUsImV4cCI6MTc3NDQzMzY5NX0.AeLVcJfsQpx15oPyp5jgZTD-urnnT2JyJWtl8l8StmY
+Content-Type: application/json
+
+{
+    "label": "Updated Transaction",
+    "amount": 150
+}
+
+###
+DELETE http://localhost:3000/api/transactions/69c3af5885e746b491fdda8e
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YmRhOTVmZDg1NmM4YzQ3NDQ3ZTAxMiIsImVtYWlsIjoidGVzdHVzZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzQ0MzAwOTUsImV4cCI6MTc3NDQzMzY5NX0.AeLVcJfsQpx15oPyp5jgZTD-urnnT2JyJWtl8l8StmY
