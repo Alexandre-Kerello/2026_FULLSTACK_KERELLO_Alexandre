@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import { Header } from "../../components/dashboard/Header.jsx";
 import { AccountSidebar } from "../../components/dashboard/AccountSidebar.jsx";
-import { USER, ALL_TRANSACTIONS, PAGE_SIZE } from "../../constants/dashboardData.js";
+import { PAGE_SIZE } from "../../constants/dashboardData.js";
 
 export default function DashboardLayout() {
+  const { id: userIdFromUrl } = useParams();
+  const [user, setUser] = useState({
+    id: userIdFromUrl || "",
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
@@ -70,10 +77,39 @@ export default function DashboardLayout() {
     }
   }
 
+  
+
   useEffect(() => {
+    async function loadUser() {
+      const token = localStorage.getItem("token");
+      if (!token || !userIdFromUrl) {
+        setAccountsError("Session invalide. Merci de vous reconnecter.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:3000/api/users/${userIdFromUrl}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const apiUser = response.data || {};
+        setUser({
+          ...apiUser,
+          id: apiUser._id || apiUser.id || userIdFromUrl,
+          firstName: apiUser.firstName || apiUser.firstname || "",
+          lastName: apiUser.lastName || apiUser.lastname || "",
+          email: apiUser.email || "",
+        });
+      } catch (error) {
+        const apiMessage = error.response?.data?.message;
+        setAccountsError(apiMessage || "Impossible de charger votre profil utilisateur.");
+      }
+    }
+
+    loadUser();
     loadAccounts();
     loadTransactions();
-  }, []);
+  }, [userIdFromUrl]);
 
   // Déterminer la page actuelle basée sur la route
   const getCurrentPage = () => {
@@ -90,7 +126,7 @@ export default function DashboardLayout() {
 
   // Passer les données communes aux pages enfants
   const contextValue = {
-    user: USER,
+    user,
     accounts,
     transactions,
     pageSize: PAGE_SIZE,
@@ -106,12 +142,19 @@ export default function DashboardLayout() {
     <>
       <div className="min-h-screen bg-slate-100">
 
-        <Header user={USER} currentPage={currentPage} onPageChange={() => {}} />
+        <Header user={user} currentPage={currentPage} onPageChange={() => {}} />
 
         <div className="flex overflow-hidden" style={{ height: "calc(100vh - 60px)" }}>
           {/* Afficher la sidebar seulement sur Dashboard */}
           {currentPage === "Dashboard" && (
-            <AccountSidebar accounts={accounts} selected={selectedAccount} onSelect={handleSelect} onCreateTransaction={loadTransactions} />
+            <AccountSidebar
+              accounts={accounts}
+              selected={selectedAccount}
+              onSelect={handleSelect}
+              onCreateTransaction={async () => {
+                await Promise.all([loadAccounts(), loadTransactions()]);
+              }}
+            />
           )}
 
           {/* Afficher la page enfant avec les données contextuelles */}
