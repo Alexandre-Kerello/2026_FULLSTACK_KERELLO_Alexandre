@@ -35,8 +35,7 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const navigate = useNavigate()
 
-  function handleLoginClick(event) {
-    event.preventDefault()
+  function navigateWithValidSession(fallbackPath) {
     const session = getValidSessionFromToken()
 
     if (session.isValid && session.userId) {
@@ -44,12 +43,22 @@ export default function Home() {
       return
     }
 
-    navigate('/login')
+    navigate(fallbackPath)
+  }
+
+  function handleLoginClick(event) {
+    event.preventDefault()
+    navigateWithValidSession('/login')
+  }
+
+  function handleStartClick(event) {
+    event.preventDefault()
+    navigateWithValidSession('/register')
   }
 
   return (
-    <div className="bg-white">
-      <header className="absolute min-h-screen overflow-x-hidden inset-x-0 top-0 z-50">
+    <div className="bg-white min-h-screen overflow-x-hidden">
+      <header className="absolute inset-x-0 top-0 z-50">
         <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
           <div className="flex lg:flex-1">
             <a href="/" className="-m-1.5 p-1.5">
@@ -157,6 +166,7 @@ export default function Home() {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
                 href="/register"
+                onClick={handleStartClick}
                 className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 {homeContent.hero.primaryCta}
