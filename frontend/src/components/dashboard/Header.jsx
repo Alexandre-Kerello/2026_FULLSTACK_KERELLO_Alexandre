@@ -107,7 +107,7 @@ export function Header({ user, currentPage, onPageChange }) {
           aria-expanded={isUserMenuOpen}
         >
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-200 to-indigo-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
-            {user.firstName[0]}{user.lastName[0]}
+            {user.firstName[0].toUpperCase()}{user.lastName[0].toUpperCase()}
           </div>
           <div className="hidden sm:block">
             <p className="text-sm font-semibold text-slate-800 leading-tight">{user.firstName} {user.lastName.toUpperCase()}</p>
