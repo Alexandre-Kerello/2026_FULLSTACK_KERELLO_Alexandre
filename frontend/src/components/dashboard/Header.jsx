@@ -64,7 +64,7 @@ export function Header({ user, currentPage, onPageChange }) {
             alt="Bank Manager Logo"
             src={bankLogo}
             className="mx-auto h-10 w-auto"
-            onClick={() => navigate(`/dashboard/${id}`)}
+            onClick={() => navigate(`/`)}
         />
         <span className="text-[15px] font-extrabold text-slate-900 tracking-tight">
           Bank Manager<span className="text-indigo-500">.</span>

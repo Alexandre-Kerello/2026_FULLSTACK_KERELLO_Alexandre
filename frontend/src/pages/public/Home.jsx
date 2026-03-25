@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline' 
 import bankLogo from '../../assets/bank-icon.png'
+import { getValidSessionFromToken } from '../../utils/authSession.js'
 
 const navigation = [
   // { name: 'Product', href: '#' },
@@ -31,6 +33,19 @@ const homeContent = {
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const navigate = useNavigate()
+
+  function handleLoginClick(event) {
+    event.preventDefault()
+    const session = getValidSessionFromToken()
+
+    if (session.isValid && session.userId) {
+      navigate(`/dashboard/${session.userId}`)
+      return
+    }
+
+    navigate('/login')
+  }
 
   return (
     <div className="bg-white">
@@ -64,7 +79,7 @@ export default function Home() {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/login" className="text-sm/6 font-semibold text-gray-900">
+            <a href="/login" onClick={handleLoginClick} className="text-sm/6 font-semibold text-gray-900">
               {homeContent.menu.loginLabel} <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
@@ -106,6 +121,7 @@ export default function Home() {
                 <div className="py-6">
                   <a
                     href="/login"
+                    onClick={handleLoginClick}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                   >
                     {homeContent.menu.loginLabel}

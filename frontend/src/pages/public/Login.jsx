@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import bankLogo from '../../assets/bank-icon.png'
+import { getValidSessionFromToken } from "../../utils/authSession.js";
 
 export default function Login() 
 {
@@ -12,6 +13,13 @@ export default function Login()
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const session = getValidSessionFromToken();
+    if (session.isValid && session.userId) {
+      navigate(`/dashboard/${session.userId}`);
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
