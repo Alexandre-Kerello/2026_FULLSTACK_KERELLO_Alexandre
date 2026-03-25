@@ -31,6 +31,9 @@ export function Header({ user, currentPage, onPageChange }) {
     navigate(`/dashboard/${id}/parameters`);
   };
 
+  const firstInitial = user?.firstName?.[0]?.toUpperCase() || "?";
+  const lastInitial = user?.lastName?.[0]?.toUpperCase() || "?";
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -107,10 +110,10 @@ export function Header({ user, currentPage, onPageChange }) {
           aria-expanded={isUserMenuOpen}
         >
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-200 to-indigo-800 flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
-            {user.firstName[0].toUpperCase()}{user.lastName[0].toUpperCase()}
+            {firstInitial}{lastInitial}
           </div>
           <div className="hidden sm:block">
-            <p className="text-sm font-semibold text-slate-800 leading-tight">{user.firstName} {user.lastName.toUpperCase()}</p>
+            <p className="text-sm font-semibold text-slate-800 leading-tight">{user?.firstName || ""} {(user?.lastName || "").toUpperCase()}</p>
           </div>
           <svg
             className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`}
