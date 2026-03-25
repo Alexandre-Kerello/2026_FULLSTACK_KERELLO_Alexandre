@@ -75,4 +75,15 @@ export const COLOR_MAP = {
   },
 };
 
-export const TYPE_ICON = { checking: "◈", savings: "◉", prepaid: "◌" };
+export const TYPE_ICON = { 
+  checking: "◈", 
+  savings: "◉", 
+  prepaid: "◌" 
+};
+
+export const CATEGORY_ICON = {
+  "Loisirs": "🎬",
+  "Alimentation": "🛒",
+  "Loyer": "🏠",
+  "Salaire": "💼",
+};

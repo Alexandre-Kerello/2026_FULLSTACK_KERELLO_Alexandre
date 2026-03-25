@@ -1,19 +1,65 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { fmt, fmtDate } from "../../utils/dashboardUtils.js";
+import { CATEGORY_ICON } from "../../constants/dashboardData.js";
 
 export function TransactionRow({ tx, onEdit, onDelete }) {
   const isPositive = tx.amount > 0;
+  const [categoryName, setCategoryName] = useState("Chargement...");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchCategoryName() {
+      const rawCategory = tx.categoryId;
+
+      if (!rawCategory) {
+        if (isMounted) setCategoryName("Sans catégorie");
+        return;
+      }
+
+      if (typeof rawCategory === "object" && rawCategory.name) {
+        if (isMounted) setCategoryName(rawCategory.name);
+        return;
+      }
+
+      const categoryId = typeof rawCategory === "object"
+        ? rawCategory._id || rawCategory.id
+        : rawCategory;
+
+      if (!categoryId) {
+        if (isMounted) setCategoryName("Sans catégorie");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:3000/api/categories/${categoryId}`);
+        const name = response.data?.name || "Catégorie inconnue";
+        if (isMounted) setCategoryName(name);
+      } catch (error) {
+        console.log(`Error fetching category for ID ${categoryId}:`, error);
+        if (isMounted) setCategoryName("Catégorie inconnue");
+      }
+    }
+
+    fetchCategoryName();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [tx.categoryId]);
 
   return (
     <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors group">
       <td className="py-3 pl-5 pr-3">
         <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-white border border-transparent group-hover:border-slate-200 flex items-center justify-center text-lg transition-all shadow-none group-hover:shadow-sm">
-          {tx.icon}
+          {CATEGORY_ICON[categoryName]}
         </div>
       </td>
       <td className="py-3 px-3">
         <p className="text-sm font-semibold text-slate-800">{tx.label}</p>
         <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-medium">
-          {tx.category}
+          {categoryName}
         </span>
       </td>
       <td className="py-3 px-3 hidden sm:table-cell text-sm text-slate-400 tabular-nums whitespace-nowrap">
@@ -44,7 +90,7 @@ export function TransactionRow({ tx, onEdit, onDelete }) {
           </button>
           {/* Delete */}
           <button
-            onClick={() => onDelete(tx.id)}
+            onClick={() => onDelete(tx.id || tx._id)}
             className="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 hover:border-rose-200 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-colors shadow-xs"
             title="Supprimer"
           >
