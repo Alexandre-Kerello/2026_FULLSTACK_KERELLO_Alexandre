@@ -109,6 +109,7 @@ export default function DashboardLayout() {
     } catch (error) {
       const apiMessage = error.response?.data?.message;
       setAccountsError(apiMessage || "Impossible de charger votre profil utilisateur.");
+      logout();
     }
   }, [logout, userIdFromUrl]);
 
