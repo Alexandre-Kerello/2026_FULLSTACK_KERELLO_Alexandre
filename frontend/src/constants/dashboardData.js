@@ -85,5 +85,12 @@ export const CATEGORY_ICON = {
   "Loisirs": "🎬",
   "Alimentation": "🛒",
   "Loyer": "🏠",
-  "Salaire": "💼",
+  "Transport": "🚗",
+  "Santé": "❤️",
+  "Revenus": "💰",
+  "Épargne": "🏦",
+  "Assurance": "🛡️",
+  "Shopping": "🛍️",
+  "Virement": "🔄",
+  "Autre": "❓",
 };

@@ -48,7 +48,14 @@ db.categories.insertMany([
     { _id: ObjectId(), name: 'Alimentation', color: '#FF5733' },
     { _id: ObjectId(), name: 'Loisirs', color: '#33FF57' },
     { _id: ObjectId(), name: 'Loyer', color: '#3357FF' },
-    { _id: ObjectId(), name: 'Salaire', color: '#2ECC71' }
+    { _id: ObjectId(), name: 'Transport', color: '#E67E22' },
+    { _id: ObjectId(), name: 'Santé', color: '#8E44AD' },
+    { _id: ObjectId(), name: 'Revenus', color: '#27AE60' },
+    { _id: ObjectId(), name: 'Épargne', color: '#2980B9' },
+    { _id: ObjectId(), name: 'Assurance', color: '#C0392B' },
+    { _id: ObjectId(), name: 'Shopping', color: '#D35400' },
+    { _id: ObjectId(), name: 'Virement', color: '#2ECC71' },
+    { _id: ObjectId(), name: 'Autre', color: '#7F8C8D' }
 ]);
 
 print('✅ BankManager DB initialisée avec succès');
