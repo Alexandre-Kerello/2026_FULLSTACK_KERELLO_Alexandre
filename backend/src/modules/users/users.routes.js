@@ -8,5 +8,8 @@ router.route('/:id')
     .get(authenticateUser, usersController.getUserById)
     .put(authenticateUser, usersController.updateUser)
     .delete(authenticateUser, usersController.deleteUser);
+    
+router.route('/:id/password')
+    .patch(authenticateUser, usersController.changePassword);
 
 export default router;

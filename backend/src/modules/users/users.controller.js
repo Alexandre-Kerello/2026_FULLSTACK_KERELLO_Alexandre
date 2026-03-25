@@ -26,11 +26,37 @@ async function updateUser(req, res, next)
         const { id } = req.params;
         const updateData = req.body;
 
-        await usersService.updateUser(id, updateData);
-        res.json({ message: 'User updated successfully' });
+        const updatedUser = await usersService.updateUser(id, updateData);
+        res.json({
+            message: 'User updated successfully',
+            user: updatedUser,
+        });
     }
     catch (error) {
         logger.error(`Error updating user: ${error.message}`);
+        next(error);
+    }
+}
+
+async function changePassword(req, res, next)
+{
+    try {
+        const { id } = req.params;
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: 'Old and new passwords are required' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+        }
+
+        await usersService.changeUserPassword(id, oldPassword, newPassword);
+        return res.status(200).json({ message: 'Password updated successfully' });
+    }
+    catch (error) {
+        logger.error(`Error changing password: ${error.message}`);
         next(error);
     }
 }
@@ -51,5 +77,6 @@ async function deleteUser(req, res, next)
 export default {
     getUserById,
     updateUser,
+    changePassword,
     deleteUser
 };
