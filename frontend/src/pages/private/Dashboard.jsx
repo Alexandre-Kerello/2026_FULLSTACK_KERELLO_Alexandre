@@ -51,7 +51,7 @@ export default function DashboardLayout() {
         balance: Number(account.balance),
         color: account.color || colorCycle[index % colorCycle.length],
         currency:
-          typeof account.currency === "object"
+          typeof account.currency === "object" && account.currency !== null
             ? account.currency.code
             : account.currency,
       }));
@@ -80,8 +80,8 @@ export default function DashboardLayout() {
       const transactions = response.data || [];
       setTransactions(transactions);
     } catch (error) {
-      const apiMessage = error.response?.data?.message;
-      setAccountsError(apiMessage || "Impossible de charger vos transactions.");
+      console.error("Erreur chargement transactions:", error);
+      // Ne pas afficher l'erreur transactions dans accountsError
     }
   }, [logout]);
 
