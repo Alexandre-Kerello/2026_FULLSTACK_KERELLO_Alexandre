@@ -1,4 +1,5 @@
 import { fmt } from "../../utils/dashboardUtils.js";
+import { TYPE_LABELS } from "../../constants/dashboardData.js";
 
 export function StatsCard({ active, accounts, totalCredit, totalDebit }) {
   const totalBalance = (accounts || []).reduce((sum, account) => sum + Number(account.balance || 0), 0);
@@ -14,7 +15,7 @@ export function StatsCard({ active, accounts, totalCredit, totalDebit }) {
           {fmt(active ? active.balance : totalBalance)}
         </p>
         <p className="text-xs font-semibold text-slate-400 mt-1 font-mono">
-          {active ? active.type : `${accounts?.length || 0} comptes actifs`}
+          {active ? TYPE_LABELS[active.type] : `${accounts?.length || 0} comptes actifs`}
         </p>
       </div>
 

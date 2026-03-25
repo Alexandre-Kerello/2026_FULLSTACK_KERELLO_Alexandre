@@ -1,6 +1,7 @@
 import { fmt } from "../../utils/dashboardUtils.js";
 import { TYPE_ICON } from "../../constants/dashboardData.js";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TYPE_LABELS } from "../../constants/dashboardData.js";
 
 export default function AccountsTable({
     accounts,
@@ -32,7 +33,7 @@ export default function AccountsTable({
                                 </div>
                             </td>
                             <td className="px-4 py-4 text-sm font-medium text-slate-900 truncate">{account.name}</td>
-                            <td className="px-4 py-4 text-sm text-slate-500">{account.type}</td>
+                            <td className="px-4 py-4 text-sm text-slate-500">{TYPE_LABELS[account.type] || account.type}</td>
                             <td className="px-4 py-4 text-sm text-slate-500">{fmt(account.balance)}</td>
                             <td className="px-4 py-4 text-sm text-slate-500">{account.currency}</td>
                             <td className="px-4 py-4 text-sm text-slate-500 align-middle">
