@@ -24,7 +24,7 @@ export default function DashboardHome() {
 
   return (
     <main className="flex-1 flex flex-col overflow-hidden p-6 gap-4">
-      <StatsCard active={active} user={user} totalCredit={totalCredit} totalDebit={totalDebit} />
+      <StatsCard active={active} accounts={accounts} totalCredit={totalCredit} totalDebit={totalDebit} />
       <TransactionsTable 
         paginated={paginated} 
         filtered={filtered} 

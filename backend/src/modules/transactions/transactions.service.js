@@ -1,6 +1,23 @@
 import transactionModel from './transactions.model.js';
 import accountService from '../accounts/accounts.service.js';
+import accountModel from '../accounts/accounts.model.js';
 import logger from '../../utils/logger.js';
+
+async function incrementAccountBalance(accountId, amountDelta) {
+    if (!accountId || !amountDelta) {
+        return;
+    }
+
+    const updatedAccount = await accountModel.findByIdAndUpdate(
+        accountId,
+        { $inc: { balance: amountDelta } },
+        { new: true }
+    );
+
+    if (!updatedAccount) {
+        throw new Error(`Account ${accountId} not found`);
+    }
+}
 
 async function getAllTransactions(userId) {
     try {
@@ -45,16 +62,21 @@ async function getTransactionById(id) {
 
 async function createTransaction(accountId, label, amount, type, currencyId, categoryId, date) {
     try {
+        const parsedAmount = Number(amount);
         const transaction = new transactionModel({
             accountId,
             label,
-            amount,
+            amount: parsedAmount,
             type,
             currencyId,
             categoryId,
             date
         });
-        return await transaction.save();
+
+        const savedTransaction = await transaction.save();
+        await incrementAccountBalance(accountId, parsedAmount);
+
+        return savedTransaction;
     }
     catch (error) {
         throw new Error(`Error creating transaction: ${error.message}`);
@@ -63,9 +85,27 @@ async function createTransaction(accountId, label, amount, type, currencyId, cat
 
 async function updateTransaction(id, accountId, label, amount, type, currencyId, categoryId, date) {
     try {
+        const previousTransaction = await transactionModel.findById(id);
+        if (!previousTransaction) {
+            return null;
+        }
+
+        const parsedAmount = Number(amount);
+        const previousAmount = Number(previousTransaction.amount);
+        const previousAccountId = String(previousTransaction.accountId);
+        const nextAccountId = String(accountId);
+
+        if (previousAccountId === nextAccountId) {
+            const delta = parsedAmount - previousAmount;
+            await incrementAccountBalance(accountId, delta);
+        } else {
+            await incrementAccountBalance(previousTransaction.accountId, -previousAmount);
+            await incrementAccountBalance(accountId, parsedAmount);
+        }
+
         const updatedTransaction = await transactionModel.findByIdAndUpdate(
             id,
-            { accountId, label, amount, type, currencyId, categoryId, date },
+            { accountId, label, amount: parsedAmount, type, currencyId, categoryId, date },
             { new: true }
         );
         return updatedTransaction;
@@ -77,6 +117,13 @@ async function updateTransaction(id, accountId, label, amount, type, currencyId,
 
 async function deleteTransaction(id) {
     try {
+        const transaction = await transactionModel.findById(id);
+        if (!transaction) {
+            return null;
+        }
+
+        await incrementAccountBalance(transaction.accountId, -Number(transaction.amount));
+
         const deletedTransaction = await transactionModel.findByIdAndDelete(id);
         return deletedTransaction;
     }

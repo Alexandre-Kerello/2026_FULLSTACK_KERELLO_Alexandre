@@ -1,7 +1,8 @@
 import { fmt } from "../../utils/dashboardUtils.js";
-import { COLOR_MAP } from "../../constants/dashboardData.js";
 
-export function StatsCard({ active, user, totalCredit, totalDebit }) {
+export function StatsCard({ active, accounts, totalCredit, totalDebit }) {
+  const totalBalance = (accounts || []).reduce((sum, account) => sum + Number(account.balance || 0), 0);
+
   return (
     <div className="grid grid-cols-3 gap-4">
       {/* Balance */}
@@ -10,10 +11,10 @@ export function StatsCard({ active, user, totalCredit, totalDebit }) {
           {active ? active.name : "Solde global"}
         </p>
         <p className="text-2xl font-extrabold text-white tabular-nums">
-          {fmt(active ? active.balance : user.totalBalance)}
+          {fmt(active ? active.balance : totalBalance)}
         </p>
         <p className="text-xs font-semibold text-slate-400 mt-1 font-mono">
-          {active ? active.type : `4 comptes actifs`}
+          {active ? active.type : `${accounts?.length || 0} comptes actifs`}
         </p>
       </div>
 
