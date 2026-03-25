@@ -22,7 +22,7 @@ const accountSchema = new mongoose.Schema(
         balance: {
             type: Number,
             required: [true, 'Account balance is required'],
-            min: [0, 'Balance cannot be negative'],
+            default: 0,
         },
         currency: {
             type: mongoose.Schema.Types.ObjectId,
