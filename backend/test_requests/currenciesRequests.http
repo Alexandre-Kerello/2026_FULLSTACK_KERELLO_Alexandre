@@ -1,0 +1,4 @@
+GET http://localhost:3000/api/currencies
+
+###
+GET http://localhost:3000/api/currencies/69bd18c9d177f9dff28563b1
