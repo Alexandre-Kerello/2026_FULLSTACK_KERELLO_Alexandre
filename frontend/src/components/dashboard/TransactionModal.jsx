@@ -3,7 +3,16 @@ import axios from "axios";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { CATEGORY_ICON } from "../../constants/dashboardData.js";
 
-export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId, onCreateTransaction }) {
+export function TransactionModal({
+  isOpen,
+  onClose,
+  accounts,
+  selectedAccountId,
+  onCreateTransaction,
+  transactionToEdit = null,
+  onTransactionSaved,
+}) {
+  const isEditMode = Boolean(transactionToEdit);
   const [categories, setCategories] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const [categoriesError, setCategoriesError] = useState("");
@@ -20,6 +29,14 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
   });
 
   const modalRef = useRef(null);
+
+  function extractId(value) {
+    if (!value) return "";
+    if (typeof value === "object") {
+      return value._id || value.id || "";
+    }
+    return value;
+  }
 
   useEffect(() => {
     async function loadCurrencies() {
@@ -89,6 +106,30 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
 
   // Mettre à jour le compte sélectionné chaque fois qu'il change
   useEffect(() => {
+    if (!isOpen || !isEditMode || !transactionToEdit) {
+      return;
+    }
+
+    const normalizedDate = transactionToEdit.date
+      ? new Date(transactionToEdit.date).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0];
+
+    setFormData((prev) => ({
+      ...prev,
+      accountId: extractId(transactionToEdit.accountId) || prev.accountId,
+      label: transactionToEdit.label || "",
+      categoryId: extractId(transactionToEdit.categoryId) || prev.categoryId,
+      currencyId: extractId(transactionToEdit.currencyId) || prev.currencyId,
+      amount: Number(transactionToEdit.amount ?? 0),
+      date: normalizedDate,
+    }));
+  }, [isOpen, isEditMode, transactionToEdit]);
+
+  useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       accountId: selectedAccountId || (accounts[0]?.id || null),
@@ -128,7 +169,8 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
     });
 
     try {
-      await axios.post("http://localhost:3000/api/transactions", {
+      const token = localStorage.getItem("token");
+      const payload = {
         accountId: formData.accountId,
         label: formData.label,
         amount: formData.amount,
@@ -136,25 +178,45 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
         currencyId: formData.currencyId,
         categoryId: formData.categoryId,
         date: formData.date,
-      }, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json"
-        },
-      });
+      };
 
-      onCreateTransaction();
+      if (isEditMode) {
+        const transactionId = transactionToEdit?._id || transactionToEdit?.id;
+        await axios.put(`http://localhost:3000/api/transactions/${transactionId}`, payload, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+        });
+      } else {
+        await axios.post("http://localhost:3000/api/transactions", payload, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+        });
+      }
+
+      if (onTransactionSaved) {
+        await onTransactionSaved();
+      } else if (onCreateTransaction) {
+        await onCreateTransaction();
+      }
+
       onClose();
-      setFormData({
-        accountId: selectedAccountId || (accounts[0]?.id || null),
-        label: "",
-        categoryId: categories[0]?.id || "",
-        currencyId: currencies[0]?.id || "",
-        amount: "",
-        date: new Date().toISOString().split("T")[0],
-      });
+
+      if (!isEditMode) {
+        setFormData({
+          accountId: selectedAccountId || (accounts[0]?.id || null),
+          label: "",
+          categoryId: categories[0]?.id || "",
+          currencyId: currencies[0]?.id || "",
+          amount: "",
+          date: new Date().toISOString().split("T")[0],
+        });
+      }
     } catch (error) {
-      console.error("Erreur lors de la création de la transaction:", error);
+      console.error("Erreur lors de l'enregistrement de la transaction:", error);
     }
   };
 
@@ -194,7 +256,9 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
       >
         {/* Header */}
         <div className="sticky top-0 flex items-center justify-between p-6 border-b border-slate-200 bg-white">
-          <h2 className="text-lg font-bold text-slate-900">Nouvelle opération</h2>
+          <h2 className="text-lg font-bold text-slate-900">
+            {isEditMode ? "Modifier l'operation" : "Nouvelle operation"}
+          </h2>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors"
@@ -236,7 +300,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
               required
               value={formData.label}
               onChange={handleChange}
-              placeholder="ex: Dépense alimentation"
+              placeholder="ex: Depense alimentation"
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
@@ -309,7 +373,6 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
                 step="0.01"
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
-              <span className="absolute right-3 top-2.5 text-slate-500 text-sm font-medium">€</span>
             </div>
             <p className="mt-1 text-xs text-slate-500">
               Positif = revenu, Négatif = dépense
@@ -344,7 +407,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
               type="submit"
               className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-400 transition-colors"
             >
-              Ajouter
+              {isEditMode ? "Enregistrer" : "Ajouter"}
             </button>
           </div>
         </form>

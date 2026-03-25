@@ -2,7 +2,7 @@ import { TransactionRow } from "./TransactionRow.jsx";
 import { Pagination } from "./Pagination.jsx";
 import { COLOR_MAP } from "../../constants/dashboardData.js";
 
-export function TransactionsTable({ paginated, filtered, active, page, totalPages, onPageChange }) {
+export function TransactionsTable({ paginated, filtered, active, page, totalPages, onPageChange, onEdit, onDelete }) {
   return (
     <div className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col overflow-hidden">
       {/* Card header */}
@@ -57,10 +57,10 @@ export function TransactionsTable({ paginated, filtered, active, page, totalPage
               </tr>
             ) : paginated.map(tx => (
               <TransactionRow
-                key={tx.id}
+                key={tx.id || tx._id}
                 tx={tx}
-                onEdit={(tx) => console.log("Modifier", tx)}
-                onDelete={(id) => console.log("Supprimer", id)}
+                onEdit={onEdit}
+                onDelete={onDelete}
               />
             ))}
           </tbody>

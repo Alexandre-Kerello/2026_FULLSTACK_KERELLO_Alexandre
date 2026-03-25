@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { Outlet, useLocation, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/dashboard/Header.jsx";
 import { AccountSidebar } from "../../components/dashboard/AccountSidebar.jsx";
 import { PAGE_SIZE } from "../../constants/dashboardData.js";
@@ -20,13 +20,20 @@ export default function DashboardLayout() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [page, setPage] = useState(1);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  async function loadAccounts() {
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  }, [navigate]);
+
+  const loadAccounts = useCallback(async () => {
     setIsLoadingAccounts(true);
     setAccountsError("");
 
     const token = localStorage.getItem("token");
     if (!token) {
+      logout();
       setAccountsError("Session invalide. Merci de vous reconnecter.");
       setIsLoadingAccounts(false);
       return;
@@ -56,60 +63,60 @@ export default function DashboardLayout() {
     } finally {
       setIsLoadingAccounts(false);
     }
-  }
+  }, [logout]);
 
-  async function loadTransactions() {
+  const loadTransactions = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
+      logout();
       setAccountsError("Session invalide. Merci de vous reconnecter.");
       return;
     }
 
     try {
-        const response = await axios.get("http://localhost:3000/api/transactions", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const transactions = response.data || [];
-        setTransactions(transactions);
+      const response = await axios.get("http://localhost:3000/api/transactions", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const transactions = response.data || [];
+      setTransactions(transactions);
     } catch (error) {
-        const apiMessage = error.response?.data?.message;
-        setAccountsError(apiMessage || "Impossible de charger vos transactions.");
+      const apiMessage = error.response?.data?.message;
+      setAccountsError(apiMessage || "Impossible de charger vos transactions.");
     }
-  }
+  }, [logout]);
 
-  
+  const loadUser = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !userIdFromUrl) {
+      logout();
+      setAccountsError("Session invalide. Merci de vous reconnecter.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:3000/api/users/${userIdFromUrl}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const apiUser = response.data || {};
+      setUser({
+        ...apiUser,
+        id: apiUser._id || apiUser.id || userIdFromUrl,
+        firstName: apiUser.firstName || apiUser.firstname || "",
+        lastName: apiUser.lastName || apiUser.lastname || "",
+        email: apiUser.email || "",
+      });
+    } catch (error) {
+      const apiMessage = error.response?.data?.message;
+      setAccountsError(apiMessage || "Impossible de charger votre profil utilisateur.");
+    }
+  }, [logout, userIdFromUrl]);
 
   useEffect(() => {
-    async function loadUser() {
-      const token = localStorage.getItem("token");
-      if (!token || !userIdFromUrl) {
-        setAccountsError("Session invalide. Merci de vous reconnecter.");
-        return;
-      }
-
-      try {
-        const response = await axios.get(`http://localhost:3000/api/users/${userIdFromUrl}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const apiUser = response.data || {};
-        setUser({
-          ...apiUser,
-          id: apiUser._id || apiUser.id || userIdFromUrl,
-          firstName: apiUser.firstName || apiUser.firstname || "",
-          lastName: apiUser.lastName || apiUser.lastname || "",
-          email: apiUser.email || "",
-        });
-      } catch (error) {
-        const apiMessage = error.response?.data?.message;
-        setAccountsError(apiMessage || "Impossible de charger votre profil utilisateur.");
-      }
-    }
-
     loadUser();
     loadAccounts();
     loadTransactions();
-  }, [userIdFromUrl]);
+  }, [loadUser, loadAccounts, loadTransactions]);
 
   // Déterminer la page actuelle basée sur la route
   const getCurrentPage = () => {

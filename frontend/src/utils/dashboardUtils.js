@@ -1,6 +1,6 @@
 // ── Utils & Formatting ────────────────────────────────────────────────────────
-export function fmt(n) {
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
+export function fmt(n, currency = "EUR") {
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency }).format(n);
 }
 
 export function fmtDate(d) {

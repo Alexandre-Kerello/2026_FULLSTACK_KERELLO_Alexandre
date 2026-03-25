@@ -1,4 +1,3 @@
-import { log } from 'node:console';
 import logger from '../../utils/logger.js';
 import transactionsService from './transactions.service.js';
 
@@ -36,8 +35,10 @@ async function createTransaction(req, res) {
         const categoryId = req.body.categoryId;
         const date = req.body.date;
 
-        if (!accountId || !label || !amount || !type || !currencyId || !categoryId || !date) {
-            logger.info(`Missing required fields: ${!accountId ? 'accountId ' : ''}${!label ? 'label ' : ''}${!amount ? 'amount ' : ''}${!type ? 'type ' : ''}${!currencyId ? 'currencyId ' : ''}${!categoryId ? 'categoryId ' : ''}${!date ? 'date ' : ''}`);
+        const isAmountMissing = amount === undefined || amount === null || Number.isNaN(Number(amount));
+
+        if (!accountId || !label || isAmountMissing || !type || !currencyId || !date) {
+            logger.info(`Missing required fields: ${!accountId ? 'accountId ' : ''}${!label ? 'label ' : ''}${isAmountMissing ? 'amount ' : ''}${!type ? 'type ' : ''}${!currencyId ? 'currencyId ' : ''}${!date ? 'date ' : ''}`);
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
@@ -60,13 +61,13 @@ async function updateTransaction(req, res) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
 
-        const accountId = req.body.accountId || previousTransaction.accountId;
-        const label = req.body.label || previousTransaction.label;
-        const amount = req.body.amount || previousTransaction.amount;
-        const type = req.body.type || previousTransaction.type;
-        const currencyId = req.body.currencyId || previousTransaction.currencyId;
-        const categoryId = req.body.categoryId || previousTransaction.categoryId;
-        const date = req.body.date || previousTransaction.date;
+        const accountId = req.body.accountId ?? previousTransaction.accountId;
+        const label = req.body.label ?? previousTransaction.label;
+        const amount = req.body.amount ?? previousTransaction.amount;
+        const type = req.body.type ?? previousTransaction.type;
+        const currencyId = req.body.currencyId ?? previousTransaction.currencyId;
+        const categoryId = req.body.categoryId ?? previousTransaction.categoryId;
+        const date = req.body.date ?? previousTransaction.date;
 
         const transaction = await transactionsService.updateTransaction(id, accountId, label, amount, type, currencyId, categoryId, date);
         logger.info(`Transaction ${id} updated successfully`);

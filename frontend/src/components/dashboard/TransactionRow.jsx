@@ -6,6 +6,11 @@ import { CATEGORY_ICON } from "../../constants/dashboardData.js";
 export function TransactionRow({ tx, onEdit, onDelete }) {
   const isPositive = tx.amount > 0;
   const [categoryName, setCategoryName] = useState("Chargement...");
+  const [currencyCode, setCurrencyCode] = useState("EUR");
+
+  function getSafeCurrencyCode(code) {
+    return /^[A-Z]{3}$/.test(code || "") ? code : "EUR";
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -49,6 +54,50 @@ export function TransactionRow({ tx, onEdit, onDelete }) {
     };
   }, [tx.categoryId]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchCurrencyCode() {
+      const rawCurrency = tx.currencyId;
+
+      if (!rawCurrency) {
+        if (isMounted) setCurrencyCode("EUR");
+        return;
+      }
+
+      if (typeof rawCurrency === "object" && rawCurrency.code) {
+        if (isMounted) setCurrencyCode(rawCurrency.code);
+        return;
+      }
+
+      const currencyId = typeof rawCurrency === "object"
+        ? rawCurrency._id || rawCurrency.id
+        : rawCurrency;
+
+      if (!currencyId) {
+        if (isMounted) setCurrencyCode("EUR");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:3000/api/currencies/${currencyId}`);
+        const code = response.data?.code;
+        if (isMounted) setCurrencyCode(getSafeCurrencyCode(code));
+      } catch (error) {
+        console.log(`Error fetching currency for ID ${currencyId}:`, error);
+        if (isMounted) setCurrencyCode("EUR");
+      }
+    }
+
+    fetchCurrencyCode();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [tx.currencyId]);
+
+
+
   return (
     <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors group">
       <td className="py-3 pl-5 pr-3">
@@ -67,7 +116,7 @@ export function TransactionRow({ tx, onEdit, onDelete }) {
       </td>
       <td className="py-3 pl-3 pr-5 text-right">
         <p className={`text-sm font-bold tabular-nums ${isPositive ? "text-emerald-600" : "text-slate-700"}`}>
-          {isPositive ? "+" : ""}{fmt(tx.amount)}
+          {isPositive ? "+" : ""}{fmt(tx.amount, getSafeCurrencyCode(currencyCode))}
         </p>
         <span className={`inline-block mt-0.5 px-1.5 py-0.5 rounded-md text-[11px] font-semibold ${
           isPositive ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"
