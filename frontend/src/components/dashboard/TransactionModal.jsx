@@ -1,34 +1,91 @@
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-
-const CATEGORIES = [
-  "Alimentation", "Loisirs", "Logement", "Transport", "Santé",
-  "Shopping", "Revenus", "Épargne", "Assurance", "Virement"
-];
-
-const CATEGORY_ICONS = {
-  "Alimentation": "🛒",
-  "Loisirs": "🎬",
-  "Logement": "🏠",
-  "Transport": "🚂",
-  "Santé": "💊",
-  "Shopping": "📦",
-  "Revenus": "💼",
-  "Épargne": "🏦",
-  "Assurance": "🛡️",
-  "Virement": "↩️",
-};
+import { CATEGORY_ICON } from "../../constants/dashboardData.js";
 
 export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId, onCreateTransaction }) {
+  const [categories, setCategories] = useState([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+  const [categoriesError, setCategoriesError] = useState("");
+  const [currencies, setCurrencies] = useState([]);
+  const [isLoadingCurrencies, setIsLoadingCurrencies] = useState(false);
+  const [currenciesError, setCurrenciesError] = useState("");
   const [formData, setFormData] = useState({
     accountId: selectedAccountId || (accounts[0]?.id || null),
     label: "",
-    category: "Alimentation",
+    categoryId: "",
+    currencyId: "",
     amount: "",
     date: new Date().toISOString().split("T")[0],
   });
 
   const modalRef = useRef(null);
+
+  useEffect(() => {
+    async function loadCurrencies() {
+      setIsLoadingCurrencies(true);
+      setCurrenciesError("");
+
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/api/currencies", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
+        const normalizedCurrencies = (response.data || [])
+          .map((currency) => ({
+            id: currency._id || currency.id,
+            code: currency.code,
+            name: currency.name,
+            symbol: currency.symbol,
+          }))
+          .filter((currency) => currency.id && currency.code);
+
+        setCurrencies(normalizedCurrencies);
+        setFormData((prev) => ({
+          ...prev,
+          currencyId: prev.currencyId || normalizedCurrencies[0]?.id || "",
+        }));
+      } catch {
+        setCurrenciesError("Impossible de charger les monnaies.");
+      } finally {
+        setIsLoadingCurrencies(false);
+      }
+    }
+
+    async function loadCategories() {
+      setIsLoadingCategories(true);
+      setCategoriesError("");
+
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:3000/api/categories", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
+        const normalizedCategories = (response.data || []).map((category) => ({
+          id: category._id || category.id,
+          name: category.name,
+        })).filter((category) => category.id && category.name);
+
+        setCategories(normalizedCategories);
+        setFormData((prev) => ({
+          ...prev,
+          categoryId: prev.categoryId || normalizedCategories[0]?.id || "",
+        }));
+      } catch {
+        setCategoriesError("Impossible de charger les categories.");
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    }
+
+    if (isOpen) {
+      loadCurrencies();
+      loadCategories();
+    }
+  }, [isOpen]);
+
 
   // Mettre à jour le compte sélectionné chaque fois qu'il change
   useEffect(() => {
@@ -36,7 +93,22 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
       ...prev,
       accountId: selectedAccountId || (accounts[0]?.id || null),
     }));
-  }, [selectedAccountId, accounts]);
+
+    const selectedAccount = accounts.find((acc) => acc.id === (selectedAccountId || accounts[0]?.id));
+    if (!selectedAccount || currencies.length === 0) return;
+
+    const accountCurrency = selectedAccount.currency;
+    const matchedCurrency = currencies.find((currency) =>
+      currency.id === accountCurrency || currency.code === accountCurrency
+    );
+
+    if (matchedCurrency) {
+      setFormData((prev) => ({
+        ...prev,
+        currencyId: matchedCurrency.id,
+      }));
+    }
+  }, [selectedAccountId, accounts, currencies]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,26 +118,44 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.label.trim() || formData.amount === "") {
-      alert("Veuillez remplir tous les champs");
-      return;
-    }
+
+    const selectedCategory = categories.find((category) => category.id === formData.categoryId);
     console.log("Nouvelle transaction:", {
       ...formData,
-      icon: CATEGORY_ICONS[formData.category],
+      icon: CATEGORY_ICON[selectedCategory?.name] || "🏷️",
     });
-    // Ici tu peux ajouter l'appel API pour créer la transaction
-    onCreateTransaction();
-    onClose();
-    setFormData({
-      accountId: selectedAccountId || (accounts[0]?.id || null),
-      label: "",
-      category: "Alimentation",
-      amount: "",
-      date: new Date().toISOString().split("T")[0],
-    });
+
+    try {
+      await axios.post("http://localhost:3000/api/transactions", {
+        accountId: formData.accountId,
+        label: formData.label,
+        amount: formData.amount,
+        type: formData.amount >= 0 ? "credit" : "debit",
+        currencyId: formData.currencyId,
+        categoryId: formData.categoryId,
+        date: formData.date,
+      }, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json"
+        },
+      });
+
+      onCreateTransaction();
+      onClose();
+      setFormData({
+        accountId: selectedAccountId || (accounts[0]?.id || null),
+        label: "",
+        categoryId: categories[0]?.id || "",
+        currencyId: currencies[0]?.id || "",
+        amount: "",
+        date: new Date().toISOString().split("T")[0],
+      });
+    } catch (error) {
+      console.error("Erreur lors de la création de la transaction:", error);
+    }
   };
 
   useEffect(() => {
@@ -122,6 +212,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
             </label>
             <select
               name="accountId"
+              required
               value={formData.accountId || ""}
               onChange={handleChange}
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -142,6 +233,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
             <input
               type="text"
               name="label"
+              required
               value={formData.label}
               onChange={handleChange}
               placeholder="ex: Dépense alimentation"
@@ -155,17 +247,50 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
               Catégorie
             </label>
             <select
-              name="category"
-              value={formData.category}
+              name="categoryId"
+              required
+              value={formData.categoryId}
               onChange={handleChange}
+              disabled={isLoadingCategories || categories.length === 0}
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             >
-              {CATEGORIES.map(cat => (
-                <option key={cat} value={cat}>
-                  {CATEGORY_ICONS[cat]} {cat}
+              {isLoadingCategories && <option value="">Chargement des categories...</option>}
+              {!isLoadingCategories && categories.length === 0 && <option value="">Aucune categorie</option>}
+              {!isLoadingCategories && categories.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {CATEGORY_ICON[cat.name] || "🏷️"} {cat.name}
                 </option>
               ))}
             </select>
+            {categoriesError && (
+              <p className="mt-1 text-xs text-rose-600">{categoriesError}</p>
+            )}
+          </div>
+
+          {/* Montant */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              Monnaie
+            </label>
+            <select
+              name="currencyId"
+              required
+              value={formData.currencyId}
+              onChange={handleChange}
+              disabled={isLoadingCurrencies || currencies.length === 0}
+              className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              {isLoadingCurrencies && <option value="">Chargement des monnaies...</option>}
+              {!isLoadingCurrencies && currencies.length === 0 && <option value="">Aucune monnaie</option>}
+              {!isLoadingCurrencies && currencies.map(currency => (
+                <option key={currency.id} value={currency.id}>
+                  {currency.code} - {currency.name} {currency.symbol}
+                </option>
+              ))}
+            </select>
+            {currenciesError && (
+              <p className="mt-1 text-xs text-rose-600">{currenciesError}</p>
+            )}
           </div>
 
           {/* Montant */}
@@ -177,6 +302,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
               <input
                 type="number"
                 name="amount"
+                required
                 value={formData.amount}
                 onChange={handleChange}
                 placeholder="0.00"
@@ -198,6 +324,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId,
             <input
               type="date"
               name="date"
+              required
               value={formData.date}
               onChange={handleChange}
               className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
