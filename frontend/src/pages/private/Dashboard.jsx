@@ -7,6 +7,7 @@ import { USER, ALL_TRANSACTIONS, PAGE_SIZE } from "../../constants/dashboardData
 
 export default function DashboardLayout() {
   const [accounts, setAccounts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
   const [accountsError, setAccountsError] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(null);
@@ -50,8 +51,28 @@ export default function DashboardLayout() {
     }
   }
 
+  async function loadTransactions() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setAccountsError("Session invalide. Merci de vous reconnecter.");
+      return;
+    }
+
+    try {
+        const response = await axios.get("http://localhost:3000/api/transactions", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const transactions = response.data || [];
+        setTransactions(transactions);
+    } catch (error) {
+        const apiMessage = error.response?.data?.message;
+        setAccountsError(apiMessage || "Impossible de charger vos transactions.");
+    }
+  }
+
   useEffect(() => {
     loadAccounts();
+    loadTransactions();
   }, []);
 
   // Déterminer la page actuelle basée sur la route
@@ -71,13 +92,14 @@ export default function DashboardLayout() {
   const contextValue = {
     user: USER,
     accounts,
-    transactions: ALL_TRANSACTIONS,
+    transactions,
     pageSize: PAGE_SIZE,
     selectedAccount,
     onSelectAccount: handleSelect,
     page,
     onPageChange: setPage,
     refreshAccounts: loadAccounts,
+    refreshTransactions: loadTransactions,
   };
 
   return (
@@ -89,7 +111,7 @@ export default function DashboardLayout() {
         <div className="flex overflow-hidden" style={{ height: "calc(100vh - 60px)" }}>
           {/* Afficher la sidebar seulement sur Dashboard */}
           {currentPage === "Dashboard" && (
-            <AccountSidebar accounts={accounts} selected={selectedAccount} onSelect={handleSelect} />
+            <AccountSidebar accounts={accounts} selected={selectedAccount} onSelect={handleSelect} onCreateTransaction={loadTransactions} />
           )}
 
           {/* Afficher la page enfant avec les données contextuelles */}

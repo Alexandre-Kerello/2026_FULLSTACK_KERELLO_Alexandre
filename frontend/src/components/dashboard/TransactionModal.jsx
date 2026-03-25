@@ -19,7 +19,7 @@ const CATEGORY_ICONS = {
   "Virement": "↩️",
 };
 
-export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId }) {
+export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId, onCreateTransaction }) {
   const [formData, setFormData] = useState({
     accountId: selectedAccountId || (accounts[0]?.id || null),
     label: "",
@@ -57,6 +57,7 @@ export function TransactionModal({ isOpen, onClose, accounts, selectedAccountId 
       icon: CATEGORY_ICONS[formData.category],
     });
     // Ici tu peux ajouter l'appel API pour créer la transaction
+    onCreateTransaction();
     onClose();
     setFormData({
       accountId: selectedAccountId || (accounts[0]?.id || null),

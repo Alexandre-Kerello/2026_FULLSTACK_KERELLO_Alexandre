@@ -4,7 +4,7 @@ import { COLOR_MAP, TYPE_ICON } from "../../constants/dashboardData.js";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { TransactionModal } from "./TransactionModal.jsx";
 
-export function AccountSidebar({ accounts, selected, onSelect }) {
+export function AccountSidebar({ accounts, selected, onSelect, onCreateTransaction }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const total = accounts.reduce((s, a) => s + a.balance, 0);
 
@@ -93,6 +93,7 @@ export function AccountSidebar({ accounts, selected, onSelect }) {
         onClose={() => setIsModalOpen(false)}
         accounts={accounts}
         selectedAccountId={selected}
+        onCreateTransaction={onCreateTransaction}
       />
     </aside>
   );

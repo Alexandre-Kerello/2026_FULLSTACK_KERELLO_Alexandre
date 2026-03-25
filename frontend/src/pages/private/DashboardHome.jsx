@@ -9,7 +9,6 @@ export default function DashboardHome() {
     transactions,
     pageSize,
     selectedAccount,
-    onSelectAccount,
     page,
     onPageChange,
   } = useOutletContext();
