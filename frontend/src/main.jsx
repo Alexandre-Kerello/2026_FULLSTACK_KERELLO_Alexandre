@@ -7,6 +7,8 @@ import {
 import './index.css'
 /* Pages */
 import Home from './pages/public/Home.jsx'
+import Features from './pages/public/Features.jsx'
+import Contacts from './pages/public/Contacts.jsx'
 import Login from './pages/public/Login.jsx'
 import Register from './pages/public/Register.jsx'
 import ErrorPage from './pages/public/Error.jsx'
@@ -30,6 +32,16 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/features",
+    element: <Features />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/contacts",
+    element: <Contacts />,
     errorElement: <ErrorPage />,
   },
   {
