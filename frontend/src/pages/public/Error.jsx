@@ -22,7 +22,7 @@ export default function ErrorPage() {
             >
               Revenir à l'accueil <span aria-hidden="true">&rarr;</span>
             </a>
-            <a href="/contact" className="rounded px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:outline-2 hover:outline-gray-400">
+            <a href="/contacts" className="rounded px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:outline-2 hover:outline-gray-400">
               Obtenir de l'aide <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
